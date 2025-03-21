@@ -44,6 +44,6 @@ jobs:
     - name: Upload JAR as an Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: app-jar
-        path: target/your-app.jar
+        name: java-demo-app-jar
+        path: target/java-demo-app.jar
         
