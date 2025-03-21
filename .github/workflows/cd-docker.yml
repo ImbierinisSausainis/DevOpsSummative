@@ -1,20 +1,20 @@
 name: Build and Deploy Docker Image
 
 on:
-  push:
-    branches:
-      - main
+ workflow_run:
+    workflows: ["Java CI with Maven"]
+    types:
+      - completed
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v3
+    - name: Download Build Artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: java-web-app
 
     - name: Log in to DockerHub
       uses: docker/login-action@v3
@@ -23,8 +23,9 @@ jobs:
         password: ${{ secrets.DOCKER_PAT }}
 
     - name: Build and Push Docker Image
-      uses: docker/build-push-action@v6
+      uses: docker/build-push-action@v4
       with:
         push: true
         tags: your-dockerhub-username/java-web-app:latest
         file: ./Dockerfile
+        context: .
