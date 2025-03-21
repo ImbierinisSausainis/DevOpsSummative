@@ -15,6 +15,8 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: java-web-app
+        run-id: ${{ github.event.workflow_run.id }}
+        github-token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Verify Downloaded Artifact
       run: ls target/
