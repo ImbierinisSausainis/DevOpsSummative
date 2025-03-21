@@ -18,9 +18,6 @@ jobs:
         run-id: ${{ github.event.workflow_run.id }}
         github-token: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Verify Downloaded Artifact
-      run: ls target/
-
     - name: Log in to DockerHub
       uses: docker/login-action@v3
       with:
