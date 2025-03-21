@@ -41,9 +41,11 @@ jobs:
     - name: Build with Maven
       run: mvn clean package
 
+    - name: Verify JAR file
+      run: ls target/
+
     - name: Upload JAR as an Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: java-demo-app-jar
-        path: target/java-demo-app.jar
-        
+        name: java-web-app
+        path: target/DevOpsSummative-1.0-SNAPSHOT.jar
