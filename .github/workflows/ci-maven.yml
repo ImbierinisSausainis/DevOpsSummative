@@ -48,4 +48,4 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: java-web-app
-        path: target/DevOpsSummative-1.0-SNAPSHOT.jar
+        path: target/java-web-app.jar
