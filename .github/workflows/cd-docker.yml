@@ -29,6 +29,6 @@ jobs:
       uses: docker/build-push-action@v4
       with:
         push: true
-        tags: your-dockerhub-username/java-web-app:latest
+        tags: ${{ secrets.DOCKER_USERNAME }}/java-web-app:latest
         file: ./Dockerfile
         context: .
