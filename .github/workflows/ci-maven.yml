@@ -38,6 +38,9 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-maven-
 
+    - name: Clear Manev cache
+      run: mvn dependency:purge-local-repository
+
     - name: Build with Maven
       run: mvn clean package
 
