@@ -1,4 +1,4 @@
 FROM openjdk:17-jdk-slim
-COPY java-web-app.jar /app/java-web-app.jar
+COPY DevOpsSummative-1.0-SNAPSHOT.jar /app/DevOpsSummative-1.0-SNAPSHOT.jar
 EXPOSE 8080
-CMD ["java", "-jar", "/app/java-web-app.jar"]
+CMD ["java", "-jar", "/app/DevOpsSummative-1.0-SNAPSHOT.jar"]
