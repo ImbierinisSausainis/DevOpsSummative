@@ -38,16 +38,27 @@
         </dependency>
     </dependencies>
 
-    <!-- Spring Boot Plugin to build executable JAR with dependencies -->
+    <!-- ✅ ADDED BUILD CONFIGURATION HERE -->
     <build>
         <plugins>
+            <!-- Spring Boot Plugin -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>3.4.1</version>
+            </plugin>
+
+            <!-- Maven Jar Plugin (Sets the Main Class) -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.2.0</version>
                 <configuration>
-                    <!-- Ensure main class is defined correctly in the JAR -->
-                    <mainClass>bpp.com.devops.Application</mainClass>
+                    <archive>
+                        <manifest>
+                            <mainClass>bpp.com.devops.Application</mainClass>
+                        </manifest>
+                    </archive>
                 </configuration>
             </plugin>
         </plugins>
