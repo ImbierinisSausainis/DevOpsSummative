@@ -83,7 +83,7 @@ jobs:
 
   # Optional: Further deployment or notification jobs can depend on this job's output
   deploy:
-    needs: semantic_versioning
+    needs: build
     if: needs.semantic_versioning.outputs.new_version
     runs-on: ubuntu-latest
     steps:
