@@ -10,10 +10,14 @@ jobs:
   build:
     if: github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
+    outputs:
+      new_version: ${{ steps.versioning.outputs.new_version }}
 
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
+      with:
+        fetch-depth: 0 # Needed to analyze commit history
     
     - name: Download Build Artifact
       uses: actions/download-artifact@v4
@@ -39,20 +43,54 @@ jobs:
         file: ./Dockerfile
         context: .
 
-    - name: Create GitHub Release
-      uses: softprops/action-gh-release@v1
+    - name: Set up Node.js # Or Python, Go, etc., depending on your versioning tool
+      uses: actions/setup-node@v3
       with:
-        name: Release ${{ github.run_number }}
-        tag_name: v${{ github.run_number }}
-        body: |
-          Automated release generated after successful CI/CD pipeline.
+        node-version: 'lts/*'
+
+    - name: Install semantic-release CLI
+      run: npm install -g semantic-release@23
+
+    - name: Analyze commits and determine next version
+      id: versioning
+      run: |
+        NEW_VERSION=$(npx semantic-release --dry-run --branches main --plugins "@semantic-release/commit-analyzer,@semantic-release/release-notes-generator,@semantic-release/github")
+        if [[ $NEW_VERSION =~ ^v[0-9]+\.[0-9]+\.[0-9]+ ]]; then
+          echo "::set-output name=new_version::$NEW_VERSION"
+          echo "New semantic version detected: $NEW_VERSION"
+        else
+          echo "No semantic version change detected."
+          exit 0 # Exit gracefully if no new version
+        fi
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Upload JAR to Release
-      uses: softprops/action-gh-release@v1
-      with:
-        tag_name: v${{ github.run_number }}
-        files: target/*.jar
+    - name: Update version in project files # Example - adjust for your project
+      if: steps.versioning.outputs.new_version
+      run: |
+        # Example for updating a package.json file
+        sed -i "s/\"version\": \".*\"/\"version\": \"${{ steps.versioning.outputs.new_version }}\"/" package.json
+        git commit -am "chore(release): v${{ steps.versioning.outputs.new_version }}"
+        git push
+
+    - name: Create Git tag and release
+      if: steps.versioning.outputs.new_version
+      run: |
+        git tag ${{ steps.versioning.outputs.new_version }}
+        git push origin ${{ steps.versioning.outputs.new_version }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # Optional: Further deployment or notification jobs can depend on this job's output
+  deploy:
+    needs: semantic_versioning
+    if: needs.semantic_versioning.outputs.new_version
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy application # Replace with your deployment steps
+        run: |
+          echo "Deploying version ${{ needs.semantic_versioning.outputs.new_version }}..."
+          # Your deployment commands here
