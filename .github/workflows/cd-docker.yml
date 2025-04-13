@@ -40,7 +40,7 @@ jobs:
       uses: docker/build-push-action@v4
       with:
         push: true
-        tags: ${{ secrets.DOCKER_USERNAME }}/java-web-app:latest
+        tags: ${{ secrets.DOCKER_USERNAME }}/demo:latest
         file: ./Dockerfile
         context: .
 
